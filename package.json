@@ -1,22 +1,25 @@
 {
-  "name": "lilo",
+  "name": "lilo-ble",
   "version": "1.0.0",
-  "description": "Reverse-engineered LILO Pret a pousser",
+  "description": "Unofficial Bluetooth controller for the Prêt à Pousser LILO indoor garden",
   "main": "index.js",
   "scripts": {
     "test": "node --test test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jzarca01/LILO.git"
+    "url": "git+https://github.com/laurent-d/lilo-ble.git"
   },
-  "author": "",
+  "author": "Jérémie Zarca",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jzarca01/LILO/issues"
+    "url": "https://github.com/laurent-d/lilo-ble/issues"
   },
-  "homepage": "https://github.com/jzarca01/LILO#readme",
+  "homepage": "https://github.com/laurent-d/lilo-ble#readme",
   "dependencies": {
     "@stoprocent/noble": "^2.8.0"
+  },
+  "engines": {
+    "node": ">=18.3"
   }
 }

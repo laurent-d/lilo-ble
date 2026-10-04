@@ -27,8 +27,8 @@ The device itself is simple: a programmable lamp with an internal clock. This pr
 ## Installation
 
 ```sh
-git clone <this-repo-url>
-cd LILO
+git clone https://github.com/laurent-d/lilo-ble.git
+cd lilo-ble
 npm install
 ```
 
