@@ -10,6 +10,10 @@ The [LILO](https://pretapousser.com/en/collections/jardins-interieur/) is a comp
 
 The device itself is simple: a programmable lamp with an internal clock. This project talks to it directly.
 
+## Why this project
+
+At the time of writing (October 2026), the official Prêt à Pousser app is broken on iOS 27, which leaves the LILO stuck with whatever settings it last received and a drifting clock. This fork started as a way to keep controlling the device from a computer in the meantime. An app fix will likely come, but having an open, app-independent way to drive the device is useful anyway.
+
 ## Features
 
 - Set the light mode: Off, Photo (20%), Spring (75%), Summer (100%)
