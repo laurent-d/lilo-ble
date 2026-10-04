@@ -12,7 +12,7 @@ Options:
   -r, --read                Read current configuration without changing it
   -h, --help                Show this help
 
-The LILO clock is set to the Mac time on every run.
+The LILO clock is set to the computer time on every run.
 The current configuration is always printed after changes.
 
 Examples:
