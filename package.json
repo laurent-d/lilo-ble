@@ -2,9 +2,9 @@
   "name": "lilo",
   "version": "1.0.0",
   "description": "Reverse-engineered LILO Pret a pousser",
-  "main": "lights.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,6 @@
   },
   "homepage": "https://github.com/jzarca01/LILO#readme",
   "dependencies": {
-    "async": "^3.2.0",
-    "commander": "^6.2.1",
-    "noble-device": "maxnowack/noble-device"
+    "@stoprocent/noble": "^2.8.0"
   }
 }

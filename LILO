@@ -1,65 +1,83 @@
 #!/usr/bin/env node
 
-const async = require("async");
-const program = require('commander');
+const { parseArgs } = require("node:util");
+const LILO = require("./lib/LILO");
+const lights = require("./lib/lights");
 
-function list(val) {
-    return val.split(',').map(String);
+const help = `Usage: ./LILO [options]
+
+Options:
+  -l, --light <0-3>         Set light mode: ${lights.map((name, i) => `${i} ${name}`).join(", ")}
+  -t, --time <HH,MM,HH,MM>  Set lighting time range, e.g. 9,0,23,0 for 09:00 - 23:00
+  -r, --read                Read current configuration without changing it
+  -h, --help                Show this help
+
+The current configuration is always printed after changes.
+
+Examples:
+  ./LILO -r
+  ./LILO -l 3 -t 9,0,23,0
+  ./LILO -l 0               (turn the light off, time range unchanged)`;
+
+let values;
+try {
+    ({ values } = parseArgs({
+        options: {
+            light: { type: "string", short: "l" },
+            time: { type: "string", short: "t" },
+            read: { type: "boolean", short: "r" },
+            help: { type: "boolean", short: "h" },
+        },
+    }));
+} catch (error) {
+    console.error(`${error.message}\n\n${help}`);
+    process.exit(1);
 }
 
-program
-    .version('1.0')
-    .option('-l, --light [value]', 'Specify light intensity')
-    .option('-t --time [time]', 'Specify time range', list)
-    .parse(process.argv);
-
-if(!program.time) {
-    program.time = [09,00,23,00];
+if (values.help || Object.keys(values).length === 0) {
+    console.log(help);
+    process.exit(0);
 }
 
-if(!program.light) {
-    program.light = "03";
-}
+const light = values.light === undefined ? undefined : Number(values.light);
+const time = values.time?.split(",").map(Number);
+const pad = n => String(n).padStart(2, "0");
+const formatTime = ([h1, m1, h2, m2]) => `${pad(h1)}:${pad(m1)} - ${pad(h2)}:${pad(m2)}`;
 
-const LILO = require('./lib/LILO');
+let timeoutMessage = "LILO not found.";
+setTimeout(() => {
+    console.error(timeoutMessage);
+    process.exit(1);
+}, 30000).unref();
 
-LILO.discover(function (liloInstance) {
+(async () => {
+    // Fail before scanning rather than after connecting.
+    if (light !== undefined) LILO.lightData(light);
+    if (time) LILO.timeData(time);
+
+    const lilo = await LILO.discover();
+    timeoutMessage = "LILO found but not responding.";
     console.log("LILO Discovered.");
-
-    liloInstance.on('disconnect', function () {
-        console.log('Disconnection.');
-        process.exit(1);
-    });
-
-    async.series([
-        function (callback) {
-            console.log('Connecting...');
-            liloInstance.connectAndSetup(callback);
-        },
-        function (callback) {
-            console.log("Setting light state.")
-            liloInstance.writeLightState(program.light, callback);
-        },
-        function (callback) {
-            console.log("Reading light state.")
-            liloInstance.readLightState(function(error, data) {
-                console.log("Light state : ", data);
-                callback();
-            });
-        },
-        function (callback) {
-            console.log("Setting time state.")
-            liloInstance.writeTimeState(program.time, callback);
-        },
-        function (callback) {
-            console.log("Reading time state.")
-            liloInstance.readTimeState(function(error, data) {
-                console.log("Time state : ", data);
-                callback();
-            });
-        },
-        function (callback) {
-            liloInstance.disconnect(callback);
+    try {
+        console.log("Connecting...");
+        await lilo.connect();
+        if (light !== undefined) {
+            console.log(`Changing light settings to ${lights[light]}`);
+            await lilo.writeLightState(light);
         }
-    ]);
+        if (time) {
+            console.log(`Changing time to ${formatTime(time)}`);
+            await lilo.writeTimeState(time);
+        }
+        const [l] = await lilo.readLightState();
+        console.log(`Light : ${lights[l] ?? `unknown (${l})`}`);
+        console.log(`Time  : ${formatTime(await lilo.readTimeState())}`);
+    } finally {
+        await lilo.disconnect();
+        console.log("Disconnection.");
+    }
+    process.exit(0); // noble keeps the event loop alive
+})().catch(error => {
+    console.error(error.message);
+    process.exit(1);
 });
