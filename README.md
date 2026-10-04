@@ -16,7 +16,7 @@ The device itself is simple: a programmable lamp with an internal clock. This pr
 - Set the daily lighting window (start and end time)
 - Sync the device clock with your computer on every run (the internal clock drifts, the official app does the same)
 - Read the current configuration
-- `explore.js`: read-only dump of every GATT characteristic, for further investigation
+- `scripts/explore.js`: read-only dump of every GATT characteristic, for further investigation
 
 ## Requirements
 
@@ -30,7 +30,10 @@ The device itself is simple: a programmable lamp with an internal clock. This pr
 git clone https://github.com/laurent-d/lilo-ble.git
 cd lilo-ble
 npm install
+npm link    # optional: installs the `lilo` command globally
 ```
+
+Without `npm link`, run `./bin/lilo.js` instead of `lilo` in the examples below.
 
 ### macOS
 
@@ -46,14 +49,14 @@ Noble needs raw access to the adapter. Either run with `sudo`, or grant the capa
 sudo setcap cap_net_raw+eip $(eval readlink -f $(which node))
 ```
 
-`lilo.sh` stops the BlueZ service and brings `hci0` up before running.
+`scripts/schedule.sh` stops the BlueZ service and brings `hci0` up before running.
 
 ## Usage
 
 Close the Prêt à Pousser app on your phone first: the LILO accepts one connection at a time.
 
 ```text
-Usage: ./LILO [options]
+Usage: lilo [options]
 
 Options:
   -l, --light <0-3>         Set light mode: 0 Off, 1 Photo (20%), 2 Spring (75%), 3 Summer (100%)
@@ -68,9 +71,9 @@ The current configuration is always printed after changes.
 Examples:
 
 ```sh
-./LILO -r                  # sync the clock and print the configuration
-./LILO -l 3 -t 6,0,22,0    # Summer, light on from 06:00 to 22:00
-./LILO -l 0                # turn the light off, schedule unchanged
+lilo -r                  # sync the clock and print the configuration
+lilo -l 3 -t 6,0,22,0    # Summer, light on from 06:00 to 22:00
+lilo -l 0                # turn the light off, schedule unchanged
 ```
 
 ```text
@@ -88,12 +91,12 @@ The script gives up after 30 seconds if the LILO is not found or does not respon
 
 ### Scheduled run
 
-`lilo.sh` applies a weekday/weekend schedule and is meant to be run from cron on Linux (for example a Raspberry Pi next to the garden). On macOS, a cron job has no terminal app to hold the Bluetooth permission and will likely be killed.
+`scripts/schedule.sh` applies a weekday/weekend schedule and is meant to be run from cron on Linux (for example a Raspberry Pi next to the garden). On macOS, a cron job has no terminal app to hold the Bluetooth permission and will likely be killed.
 
 ### As a library
 
 ```js
-const LILO = require("./");
+const LILO = require("lilo-ble"); // or require("./lib/lilo") from a clone
 
 const lilo = await LILO.discover();
 await lilo.connect();
@@ -115,9 +118,9 @@ The official app picks a preset from the plants in the pods:
 | Mixed | Summer and Spring plants together | Spring (75%) | 08:00 – 22:00 | 13h30 – 14h30 |
 
 ```sh
-./LILO -l 3 -t 6,0,22,0    # Summer
-./LILO -l 2 -t 10,0,22,0   # Spring
-./LILO -l 2 -t 8,0,22,0    # Mixed
+lilo -l 3 -t 6,0,22,0    # Summer
+lilo -l 2 -t 10,0,22,0   # Spring
+lilo -l 2 -t 8,0,22,0    # Mixed
 ```
 
 ## Protocol
@@ -137,15 +140,24 @@ Notes:
 
 - The lamp is on when the device clock is inside the window. It re-evaluates immediately after a write.
 - The window cannot span midnight in this tool (start must be before end).
-- The clock drifts by a few minutes over months and has no time zone or DST handling: sync it regularly (every run of `./LILO` does).
+- The clock drifts by a few minutes over months and has no time zone or DST handling: sync it regularly (every run of `lilo` does).
 
-`data.json` is the GATT dump of the device. `explore.js` reads every readable characteristic and logs notifications:
+`docs/gatt-dump.json` is the GATT dump of the device. `scripts/explore.js` reads every readable characteristic and logs notifications:
 
 ```sh
-node explore.js 60    # listen for 60 seconds
+node scripts/explore.js 60    # listen for 60 seconds
 ```
 
 ## Development
+
+```text
+bin/lilo.js            CLI
+lib/lilo.js            LILO class: discovery, connection, payload validation, read/write
+scripts/explore.js     read-only GATT explorer
+scripts/schedule.sh    weekday/weekend schedule for cron
+test/                  node:test suite
+docs/gatt-dump.json    GATT dump of the device
+```
 
 ```sh
 npm test

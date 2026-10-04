@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 const { parseArgs } = require("node:util");
-const LILO = require("./lib/LILO");
-const lights = require("./lib/lights");
+const LILO = require("../lib/lilo");
 
-const help = `Usage: ./LILO [options]
+const { lights } = LILO;
+
+const help = `Usage: lilo [options]
 
 Options:
   -l, --light <0-3>         Set light mode: ${lights.map((name, i) => `${i} ${name}`).join(", ")}
@@ -16,9 +17,9 @@ The LILO clock is set to the computer time on every run.
 The current configuration is always printed after changes.
 
 Examples:
-  ./LILO -r
-  ./LILO -l 3 -t 9,0,23,0
-  ./LILO -l 0               (turn the light off, time range unchanged)`;
+  lilo -r
+  lilo -l 3 -t 9,0,23,0
+  lilo -l 0               (turn the light off, time range unchanged)`;
 
 let values;
 try {

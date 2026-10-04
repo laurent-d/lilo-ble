@@ -1,6 +1,6 @@
 const assert = require("node:assert");
 const test = require("node:test");
-const LILO = require("./lib/LILO");
+const LILO = require("../lib/lilo");
 
 test("payload validation", () => {
     assert.deepStrictEqual(LILO.lightData(3), Buffer.from([3]));

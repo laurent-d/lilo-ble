@@ -2,9 +2,9 @@
   "name": "lilo-ble",
   "version": "1.0.0",
   "description": "Unofficial Bluetooth controller for the Prêt à Pousser LILO indoor garden",
-  "main": "index.js",
+  "main": "lib/lilo.js",
   "scripts": {
-    "test": "node --test test.js"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,9 @@
   "homepage": "https://github.com/laurent-d/lilo-ble#readme",
   "dependencies": {
     "@stoprocent/noble": "^2.8.0"
+  },
+  "bin": {
+    "lilo": "bin/lilo.js"
   },
   "engines": {
     "node": ">=18.3"
