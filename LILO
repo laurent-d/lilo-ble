@@ -12,6 +12,7 @@ Options:
   -r, --read                Read current configuration without changing it
   -h, --help                Show this help
 
+The LILO clock is set to the Mac time on every run.
 The current configuration is always printed after changes.
 
 Examples:
@@ -61,6 +62,9 @@ setTimeout(() => {
     try {
         console.log("Connecting...");
         await lilo.connect();
+        const now = new Date();
+        await lilo.writeClock(now);
+        console.log(`Clock set to ${pad(now.getHours())}:${pad(now.getMinutes())}`);
         if (light !== undefined) {
             console.log(`Changing light settings to ${lights[light]}`);
             await lilo.writeLightState(light);
