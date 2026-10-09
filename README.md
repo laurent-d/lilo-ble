@@ -41,9 +41,18 @@ Without `npm link`, run `./bin/lilo.js` instead of `lilo` in the examples below.
 
 ### macOS
 
-macOS asks for Bluetooth permission on first run. The permission is granted to the **terminal app**, and that app must declare Bluetooth usage: run the script from **VS Code's integrated terminal** or **iTerm2**. Terminals that don't declare it (Terminal.app, Warp) are killed by macOS and the script exits with a bare `abort`.
+macOS asks for Bluetooth permission on first run. The permission is granted to the **terminal app**, and that app must declare Bluetooth usage: run the script from **VS Code's integrated terminal** or **iTerm2**. Terminals that don't declare it (Terminal.app, Warp) are killed by macOS; `lilo` then prints a message explaining why.
 
 If nothing happens or you get `Timeout waiting for Noble to be powered on`, check *System Settings → Privacy & Security → Bluetooth*.
+
+#### Native app
+
+`scripts/make-macos-app.sh` builds `build/LILO.app`, a small native app (SwiftUI + CoreBluetooth, no Node needed) that reads the configuration on launch and lets you pick the light mode and lighting window, then send them. It follows the system language (English or French; translations in `macos/fr.lproj`). It declares Bluetooth usage itself, so it works whatever terminal you use. Requires the Xcode command line tools and macOS 14 or later.
+
+```sh
+scripts/make-macos-app.sh
+open build/LILO.app
+```
 
 ### Linux
 
@@ -158,6 +167,8 @@ node scripts/explore.js 60    # listen for 60 seconds
 bin/lilo.js            CLI
 lib/lilo.js            LILO class: discovery, connection, payload validation, read/write
 scripts/explore.js     read-only GATT explorer
+scripts/make-macos-app.sh  builds the native macOS app
+macos/                 native macOS app source (SwiftUI)
 scripts/schedule.sh    weekday/weekend schedule for cron
 test/                  node:test suite
 docs/gatt-dump.json    GATT dump of the device

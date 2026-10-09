@@ -1,0 +1,38 @@
+/* Light modes */
+"Off" = "Éteint";
+"Photo" = "Photo";
+"Spring" = "Printemps";
+"Summer" = "Été";
+"Light stays off." = "La lumière reste éteinte.";
+"20% intensity." = "Intensité de 20 %.";
+"75% intensity." = "Intensité de 75 %.";
+"100% intensity." = "Intensité de 100 %.";
+
+/* Form */
+"Light" = "Lumière";
+"Mode" = "Mode";
+"Schedule" = "Horaires";
+"Lights on" = "Allumage";
+"Lights off" = "Extinction";
+"%lld h of light per day" = "%lld h de lumière par jour";
+"%lld h %lld min of light per day" = "%lld h %lld min de lumière par jour";
+"Status" = "État";
+"Read" = "Lire";
+"Send" = "Envoyer";
+
+/* Status */
+"Searching for LILO…" = "Recherche du LILO…";
+"Connecting…" = "Connexion…";
+"Read at %@." = "Lu à %@.";
+"Sent at %@." = "Envoyé à %@.";
+
+/* Errors */
+"LILO not found." = "LILO introuvable.";
+"LILO not responding (%@)." = "Le LILO ne répond pas (%@).";
+"LILO not configured (light %@, window %@): choose settings and send." = "LILO non configuré (lumière %1$@, plage %2$@) : choisissez les réglages et envoyez-les.";
+"LILO light/time/clock characteristics not found (unsupported firmware?)" = "Caractéristiques lumière/horaires/horloge introuvables (firmware non pris en charge ?)";
+"Bluetooth access denied: allow LILO in System Settings → Privacy & Security → Bluetooth." = "Accès Bluetooth refusé : autorisez LILO dans Réglages Système → Confidentialité et sécurité → Bluetooth.";
+"Bluetooth is off." = "Le Bluetooth est désactivé.";
+"Bluetooth unavailable." = "Bluetooth indisponible.";
+"Connection failed." = "Échec de la connexion.";
+"LILO disconnected." = "LILO déconnecté.";

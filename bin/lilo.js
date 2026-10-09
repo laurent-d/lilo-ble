@@ -41,6 +41,23 @@ if (values.help || Object.keys(values).length === 0) {
     process.exit(0);
 }
 
+// macOS kills the process (uncatchable SIGABRT) when the terminal app doesn't declare
+// Bluetooth usage, so run the Bluetooth work in a child and explain its death.
+if (process.platform === "darwin" && !process.env.LILO_CHILD) {
+    const { spawnSync } = require("node:child_process");
+    const { status, signal } = spawnSync(process.execPath, process.argv.slice(1), {
+        stdio: "inherit",
+        env: { ...process.env, LILO_CHILD: "1" },
+    });
+    if (signal === "SIGABRT") {
+        console.error(`macOS blocked Bluetooth access for this terminal app.
+Run lilo from a terminal that declares Bluetooth usage, such as VS Code's integrated terminal.
+Terminal.app and Warp don't.`);
+        process.exit(1);
+    }
+    process.exit(status ?? 1);
+}
+
 const light = values.light === undefined ? undefined : Number(values.light);
 const time = values.time?.split(",").map(Number);
 const pad = n => String(n).padStart(2, "0");
